@@ -19,6 +19,7 @@ from plotly.subplots import make_subplots
 import pandas as pd
 from collections import deque
 import pickle
+import json
 
 # Timezone for Indonesia (WIB = UTC+7)
 WIB = timezone(timedelta(hours=7))
@@ -152,6 +153,32 @@ if 'firebase_b_error' not in st.session_state:
     st.session_state.firebase_b_error = None
 
 # ========================================
+# HELPER FUNCTION FOR STREAMLIT SECRETS
+# ========================================
+
+def get_firebase_credentials(secret_key):
+    """
+    Convert Streamlit secrets to dictionary for Firebase credentials.
+    Handles both TOML format (dict-like) and JSON string format.
+    """
+    secret_data = st.secrets[secret_key]
+
+    # If it's already a dict-like object (AttrDict from Streamlit)
+    if hasattr(secret_data, 'to_dict'):
+        return secret_data.to_dict()
+
+    # If it's a regular dict
+    if isinstance(secret_data, dict):
+        return dict(secret_data)
+
+    # If it's a string (JSON format)
+    if isinstance(secret_data, str):
+        return json.loads(secret_data)
+
+    # Try to convert to dict
+    return dict(secret_data)
+
+# ========================================
 # FIREBASE A INITIALIZATION (Sensor Data from ESP32)
 # ========================================
 
@@ -160,7 +187,8 @@ def init_firebase_a():
     """Initialize Firebase A for reading sensor data from ESP32"""
     if not firebase_admin._apps:
         try:
-            cred = credentials.Certificate(st.secrets["firebase_a"])
+            cred_dict = get_firebase_credentials("firebase_a")
+            cred = credentials.Certificate(cred_dict)
             firebase_admin.initialize_app(cred, {
                 'databaseURL': 'https://skripsic3-b62fc-default-rtdb.asia-southeast1.firebasedatabase.app/'
             })
@@ -186,13 +214,14 @@ def init_firebase_b():
             # App doesn't exist, create it
             pass
 
-        cred_b = credentials.Certificate(st.secrets["firebase_b"])
+        cred_dict = get_firebase_credentials("firebase_b")
+        cred_b = credentials.Certificate(cred_dict)
         firebase_admin.initialize_app(cred_b, {
             'databaseURL': FIREBASE_B_URL
         }, name='firebase_b')
         return True
-    except FileNotFoundError:
-        st.error(f"File tidak ditemukan: Firebase b")
+    except KeyError:
+        st.error("Firebase B credentials tidak ditemukan di secrets")
         return False
     except Exception as e:
         st.error(f"Firebase B Error: {e}")
