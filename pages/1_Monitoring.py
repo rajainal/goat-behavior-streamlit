@@ -35,7 +35,7 @@ FIREBASE_B_URL = "https://skripsic3web-default-rtdb.asia-southeast1.firebasedata
 
 # Firebase B Service Account JSON file
 # Download from: Firebase Console (skripsic3web) -> Project Settings -> Service accounts -> Generate new private key
-FIREBASE_B_CREDENTIALS = "skripsic3web-firebase-adminsdk-fbsvc-396fb6d1f2.json"  # Ganti dengan nama file JSON Anda
+# Ganti dengan nama file JSON Anda
 
 # ========================================
 # PAGE CONFIG
@@ -160,7 +160,7 @@ def init_firebase_a():
     """Initialize Firebase A for reading sensor data from ESP32"""
     if not firebase_admin._apps:
         try:
-            cred = credentials.Certificate("skripsic3-b62fc-firebase-adminsdk-fbsvc-4fb2c8d8dd.json")
+            cred = credentials.Certificate(st.secrets["firebase_a"])
             firebase_admin.initialize_app(cred, {
                 'databaseURL': 'https://skripsic3-b62fc-default-rtdb.asia-southeast1.firebasedatabase.app/'
             })
@@ -186,13 +186,13 @@ def init_firebase_b():
             # App doesn't exist, create it
             pass
 
-        cred_b = credentials.Certificate(FIREBASE_B_CREDENTIALS)
+        cred_b = credentials.Certificate(st.secrets["firebase_b"])
         firebase_admin.initialize_app(cred_b, {
             'databaseURL': FIREBASE_B_URL
         }, name='firebase_b')
         return True
     except FileNotFoundError:
-        st.error(f"File tidak ditemukan: {FIREBASE_B_CREDENTIALS}")
+        st.error(f"File tidak ditemukan: Firebase b")
         return False
     except Exception as e:
         st.error(f"Firebase B Error: {e}")
@@ -463,7 +463,7 @@ with st.sidebar:
             st.success("✅ Firebase B (Prediksi)")
     else:
         st.error("❌ Firebase B (Prediksi)")
-        st.caption(f"File: {FIREBASE_B_CREDENTIALS}")
+        st.caption(f"File: Firebase B")
 
     if model:
         st.success("✅ Model")
