@@ -23,8 +23,39 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    /* Hide default streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+
+    /* Center card styling */
+    .home-card {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 15px;
+        padding: 3rem 2rem;
+        max-width: 500px;
+        margin: 2rem auto;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .judul-skripsi {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 2rem;
+    }
+
+    .info-text {
+        font-size: 1.1rem;
+        color: #333;
+        margin: 0.5rem 0;
+    }
+
+    /* Sidebar styling */
+    .css-1d391kg {
+        background-color: #2d2d2d;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -32,34 +63,23 @@ st.markdown("""
 # MAIN CONTENT
 # ========================================
 
-# Center content using columns
-col1, col2, col3 = st.columns([1, 2, 1])
+# Logo centered above card
+logo_path = Path("assets/logo_usu.png")
+if logo_path.exists():
+    col1, col2, col3 = st.columns([1.5, 1, 1.5])
+    with col2:
+        st.image(str(logo_path), width=150)
 
-with col2:
-    # Logo centered
-    logo_path = Path("assets/logo_usu.png")
-    if logo_path.exists():
-        subcol1, subcol2, subcol3 = st.columns([1, 1, 1])
-        with subcol2:
-            st.image(str(logo_path), width=150)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Title
-    st.markdown("""
-    <h3 style="text-align: center; color: #333;">
-        Implementasi IoT dan CNN-GRU Dalam Monitoring Perilaku Kambing
-        Untuk Mendukung Precision Livestock Farming
-    </h3>
-    """, unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    # Info
-    st.markdown("""
-    <div style="text-align: center;">
-        <p style="font-size: 1.1rem; margin: 0.5rem 0;">S1 Ilmu Komputer</p>
-        <p style="font-size: 1.1rem; margin: 0.5rem 0;">M. Raja Inal Lubis</p>
-        <p style="font-size: 1.1rem; margin: 0.5rem 0;">211401134</p>
+# Create centered card
+st.markdown("""
+<div class="home-card">
+    <div class="judul-skripsi">
+        Implementasi IoT dan CNN-GRU<br>
+        Dalam Monitoring Perilaku Kambing Untuk Mendukung Precision Livestock Farming
     </div>
-    """, unsafe_allow_html=True)
+
+    <div class="info-text">S1 Ilmu Komputer</div>
+    <div class="info-text">M. Raja Inal Lubis</div>
+    <div class="info-text">211401134</div>
+</div>
+""", unsafe_allow_html=True)
